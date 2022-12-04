@@ -1,0 +1,55 @@
+# Setup browsers in Docker by selenium/hub
+# Can setup chrome, firefox and edge
+# Create number of browser replicas as you like by change [replicas]
+# All depend on the docker resources to get best performance by different parameters
+# TO START THIS BROWSER POOL:
+# > docker compose up -d
+# To view the console: 
+# OPEN: http://localhost:4444
+# To test the actual scraping:
+# > python scraper.py (view the console page to see the usage of queue)
+
+version: '3.8'
+
+services:
+  chrome:
+    image: selenium/node-chrome:4.7.0-20221202
+    shm_size: 2gb
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    deploy:
+      replicas: 6
+    entrypoint: bash -c 'SE_OPTS="--host $$HOSTNAME" /opt/bin/entry_point.sh'
+
+  #edge:
+  #  image: selenium/node-edge:4.7.0-20221202
+  #  shm_size: 2gb
+  #  environment:
+  #    - SE_EVENT_BUS_HOST=selenium-hub
+  #    - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #    - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #  deploy:
+  #    replicas: 5
+  #  entrypoint: bash -c 'SE_OPTS="--host $$HOSTNAME" /opt/bin/entry_point.sh'
+
+  #firefox:
+  #  image: selenium/node-firefox:4.7.0-20221202
+  #  shm_size: 2gb
+  #  environment:
+  #    - SE_EVENT_BUS_HOST=selenium-hub
+  #    - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #    - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #  deploy:
+  #    replicas: 5
+  #  entrypoint: bash -c 'SE_OPTS="--host $$HOSTNAME" /opt/bin/entry_point.sh'
+
+  selenium-hub:
+    image: selenium/hub:4.7.0-20221202
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+
+
